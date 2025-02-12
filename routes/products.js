@@ -27,7 +27,12 @@ productsRouter.post('/', async (req, res, next) => {
     const queryString = 
     `INSERT INTO products (name, type, price, note) 
     VALUES ($1, $2, $3, $4)`;
-    const result = await db.query(queryString, [name, type, price, note]);
+    let result;
+    try {
+        result = await db.query(queryString, [name, type, price, note]);
+    } catch(err) {
+        return res.status(400).send(err);
+    }
     res.send(result);
 });
 
