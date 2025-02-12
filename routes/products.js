@@ -31,4 +31,20 @@ productsRouter.post('/', async (req, res, next) => {
     res.send(result);
 });
 
+//delete a product by id
+productsRouter.delete('/:id', async (req, res, next) => {
+    if (isNaN(Number(req.params.id))) {
+        return res.status(400).send('Invalid product id');
+    }
+    const queryString = `
+    DELETE FROM products
+    WHERE id = $1`;
+    const result = await db.query(queryString, [req.params.id]);
+    if (result.rowCount == 0) {
+        return res.status(404).send('Product id not found');
+    } else {
+        return res.send("Deleted 1 row");
+    }
+});
+
 module.exports = productsRouter;
