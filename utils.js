@@ -1,3 +1,5 @@
+const format = require('pg-format');
+
 //Return query parameters ($1, $2, $3...) base on the length of an object
 const objToParams = (obj) => {
     const objLength = Object.keys(obj).length;
@@ -13,11 +15,7 @@ const objToParams = (obj) => {
 const objToQueryConditions = (obj) => {
     let conditions = [];
     for (let [key, value] of Object.entries(obj)) {
-        if (typeof value == 'string') {
-            conditions.push(`${key} = "${value}"`);
-        } else {
-            conditions.push(`${key} = ${value}`);
-        }
+        conditions.push(format('%I = %L', key, value));
     }
     return conditions.join(',');
 }
