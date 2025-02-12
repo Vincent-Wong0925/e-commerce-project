@@ -21,4 +21,14 @@ productsRouter.get('/:id', async (req, res, next) => {
     }
 });
 
+//insert a new product
+productsRouter.post('/', async (req, res, next) => {
+    const {name, type, price, note} = req.body;
+    const queryString = 
+    `INSERT INTO products (name, type, price, note) 
+    VALUES ($1, $2, $3, $4)`;
+    const result = await db.query(queryString, [name, type, price, note]);
+    res.send(result);
+});
+
 module.exports = productsRouter;
