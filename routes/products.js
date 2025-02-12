@@ -1,5 +1,7 @@
 const express = require('express');
 const db = require('../db/index');
+const { objToParams, objToQueryConditions } = require('../utils');
+
 const productsRouter = express.Router();
 
 //get all products info
@@ -34,6 +36,28 @@ productsRouter.post('/', async (req, res, next) => {
         return res.status(400).send(err);
     }
     res.send(result);
+});
+
+//Update a product by id
+productsRouter.put('/:id', async (req, res, next) => {
+    if (isNaN(Number(req.params.id))) {
+        return res.status(400).send('Invalid product id');
+    }
+
+    const queryValues = objToQueryConditions(req.body);
+    const queryString = 
+    `UPDATE products
+    SET ${queryValues}
+    WHERE id = ${req.params.id}`;
+    
+    let result;
+    try {
+        result = await db.query(queryString);
+    } catch(err) {
+        res.status(400).send(err);
+    }
+    res.send(result);
+
 });
 
 //delete a product by id
