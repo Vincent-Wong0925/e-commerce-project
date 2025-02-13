@@ -4,10 +4,20 @@ const { objToParams, objToQueryConditions } = require('../utils');
 
 const productsRouter = express.Router();
 
-//get all products info
+//get all products info or a type of product if query string exist in the path
 productsRouter.get('/', async (req, res, next) => {
-    const result = await db.query('SELECT * FROM products');
-    res.send(result.rows);
+    const productType = req.query.type;
+    let result;
+    if (productType == undefined) {
+        result = await db.query('SELECT * FROM products');
+    } else {
+        result = await db.query('SELECT * FROM products WHERE type = $1', [productType]);
+    }
+
+    if (result.rowCount == 0) {
+        return res.status(404).send('Products not found');
+    }
+    return res.send(result.rows);
 });
 
 //get a product by id
