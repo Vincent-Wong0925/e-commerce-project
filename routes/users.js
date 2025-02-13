@@ -1,6 +1,6 @@
 const express = require('express');
 const db = require('../db/index');
-const { validateId } = require('../utils');
+const { objToQueryConditions ,validateId } = require('../utils');
 
 const usersRouter = express.Router();
 
@@ -51,6 +51,26 @@ usersRouter.post('/', async (req, res, next) => {
         return res.status(400).send(err);
     }
     return res.send('New user created');
+});
+
+//Update a user by id
+usersRouter.put('/:id', async (req, res, next) => {
+    const queryValues = objToQueryConditions(req.body);
+    const queryString = `
+    UPDATE users
+    SET ${queryValues}
+    WHERE id = $1`;
+    let result;
+
+    try {
+        result = await db.query(queryString, [req.params.id]);
+    } catch(err) {
+        return res.status(400).send(err);
+    }
+    if (result.rowCount == 0) {
+        return res.status(404).send(err);
+    }
+    return res.send(result);
 });
 
 //Delete a user by id
