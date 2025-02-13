@@ -61,6 +61,10 @@ productsRouter.put('/:id', async (req, res, next) => {
     } catch(err) {
         res.status(400).send(err);
     }
+
+    if (result.rowCount == 0) {
+        res.status(404).send('Product not found');
+    }
     res.send(result);
 
 });

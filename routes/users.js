@@ -68,7 +68,7 @@ usersRouter.put('/:id', async (req, res, next) => {
         return res.status(400).send(err);
     }
     if (result.rowCount == 0) {
-        return res.status(404).send(err);
+        return res.status(404).send('User not found');
     }
     return res.send(result);
 });
