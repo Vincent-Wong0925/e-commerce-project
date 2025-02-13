@@ -1,8 +1,10 @@
 const express = require('express');
 const db = require('../db/index');
-const { objToParams, objToQueryConditions } = require('../utils');
+const { objToParams, objToQueryConditions, validateId } = require('../utils');
 
 const productsRouter = express.Router();
+
+productsRouter.use('/:id', validateId);
 
 //get all products info or a type of product if query string exist in the path
 productsRouter.get('/', async (req, res, next) => {
@@ -22,9 +24,11 @@ productsRouter.get('/', async (req, res, next) => {
 
 //get a product by id
 productsRouter.get('/:id', async (req, res, next) => {
+    /*
     if (isNaN(Number(req.params.id))) {
         return res.status(400).send('Invalid product id');
     }
+        */
     const result = await db.query('SELECT * FROM products WHERE id = $1', [req.params.id]);
     if (result.rowCount > 0) {
         return res.send(result.rows);
@@ -50,9 +54,11 @@ productsRouter.post('/', async (req, res, next) => {
 
 //Update a product by id
 productsRouter.put('/:id', async (req, res, next) => {
+    /*
     if (isNaN(Number(req.params.id))) {
         return res.status(400).send('Invalid product id');
     }
+        */
 
     const queryValues = objToQueryConditions(req.body);
     const queryString = 
@@ -72,9 +78,11 @@ productsRouter.put('/:id', async (req, res, next) => {
 
 //delete a product by id
 productsRouter.delete('/:id', async (req, res, next) => {
+    /*
     if (isNaN(Number(req.params.id))) {
         return res.status(400).send('Invalid product id');
     }
+        */
     const queryString = `
     DELETE FROM products
     WHERE id = $1`;

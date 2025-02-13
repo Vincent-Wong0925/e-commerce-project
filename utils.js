@@ -20,4 +20,17 @@ const objToQueryConditions = (obj) => {
     return conditions.join(',');
 }
 
-module.exports = {objToParams, objToQueryConditions};
+//Check if the id in req.params is a number
+const validateId = (req, res, next) => {
+    if (isNaN(Number(req.params.id))) {
+        return res.status(400).send('Invalid id');
+    } else {
+        next();
+    }
+}
+
+module.exports = {
+    objToParams, 
+    objToQueryConditions,
+    validateId
+};
