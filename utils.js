@@ -24,9 +24,8 @@ const objToQueryConditions = (obj) => {
 const validateId = (req, res, next) => {
     if (isNaN(Number(req.params.id))) {
         return res.status(400).send('Invalid id');
-    } else {
-        next();
     }
+    next();
 }
 
 module.exports = {
