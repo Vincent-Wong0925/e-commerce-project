@@ -9,13 +9,24 @@ ordersRouter.use('/:id', validateId);
 //Get all orders or orders by user_id(optional)
 ordersRouter.get('/', async (req, res, next) => {
     const { user_id } = req.query;
-    if(isNaN(Number(user_id))) { return res.status(400).send('Invalid user_id'); }
 
-    const queryString = `
-    SELECT * FROM orders
-    ${user_id !== undefined ? `WHERE user_id = $1` : ``}`;
+    let queryString = `
+    SELECT orders.user_id, 
+        orders_products.order_id, 
+        orders_products.product_id, 
+        products.name, 
+        products.type, 
+        products.price, 
+        products.note
+    FROM orders, orders_products, products
+    WHERE orders.id = orders_products.order_id
+        AND orders_products.product_id = products.id`;
     let queryValue = [];
-    if (user_id !== undefined) { queryValue.push(user_id); }
+    if (user_id !== undefined) {
+        if(isNaN(Number(user_id))) { return res.status(400).send('Invalid user_id'); }
+        queryString = queryString + ` AND orders.user_id = $1`;
+        queryValue.push(user_id);
+    }
 
     let result;
     try {
@@ -31,8 +42,17 @@ ordersRouter.get('/', async (req, res, next) => {
 //Get an order by id
 ordersRouter.get('/:id', async (req, res, next) => {
     const queryString = `
-    SELECT * FROM orders
-    WHERE id = $1`;
+    SELECT orders.user_id, 
+        orders_products.order_id, 
+        orders_products.product_id, 
+        products.name, 
+        products.type, 
+        products.price, 
+        products.note
+    FROM orders, orders_products, products
+    WHERE orders.id = orders_products.order_id
+        AND orders_products.product_id = products.id
+        AND orders.id = $1`;
 
     let result;
     try {
