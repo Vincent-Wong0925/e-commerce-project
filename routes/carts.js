@@ -55,20 +55,34 @@ cartsRouter.post('/', async (req, res, next) => {
     return res.send('New entry added to carts');
 });
 
-cartsRouter.delete('/:id', async (req, res, next) => {
+//Delete cart item(s) by user_id(mandatory) and product_id(optional)
+cartsRouter.delete('/', async (req, res, next) => {
+    const { user_id, product_id } = req.query;
+    if (user_id == undefined) {
+        return res.status(400).send('Missing user_id');
+    }
+    if (isNaN(Number(user_id))) {
+        return res.status(400).send('Invalid id');
+    }
+
     const queryString = `
     DELETE FROM carts
-    WHERE user_id = $1`;
+    WHERE user_id = $1
+    ${product_id !== undefined ? `AND product_id = $2` : ``}`;
+    let queryValue = [user_id];
+    if (product_id !== undefined) {
+        queryValue.push(product_id);
+    }
 
     let result;
     try {
-        result = await db.query(queryString, [req.params.id]);
+        result = await db.query(queryString, queryValue);
     } catch(err) {
         return res.status(400).send(err);
     }
 
     if (result.rowCount == 0) {
-        return res.status(404).send('User not found');
+        return res.status(404).send('Cart item not found');
     }
     return res.send(result);
 });
