@@ -55,6 +55,31 @@ cartsRouter.post('/', async (req, res, next) => {
     return res.send('New entry added to carts');
 });
 
+//Update the number of a cart item by user_id and product_id(both mandatory)
+cartsRouter.put('/', async (req, res, next) => {
+    const { user_id, product_id } = req.query;
+    const { number } = req.body;
+    if (user_id == undefined) { return res.status(400).send('Missing user_id'); }
+    if (product_id == undefined) { return res.status(400).send('Missing product_id'); }
+    if (number == undefined) { return res.status(400).send('Missing "number" value in request body'); }
+    if (isNaN(Number(number))) {return res.status(400).send('Invalid "number" value in request body'); }
+
+    const queryString = `
+    UPDATE carts
+    SET number = $1
+    WHERE user_id = $2
+    AND product_id = $3`;
+
+    let result;
+    try {
+        result = await db.query(queryString, [number, user_id, product_id]);
+    } catch(err) {
+        return res.status(400).send(err);
+    }
+    if (result.rowCount == 0) { return res.status(404).send('Cart item not found'); }
+    return (res.send(result));
+});
+
 //Delete cart item(s) by user_id(mandatory) and product_id(optional)
 cartsRouter.delete('/', async (req, res, next) => {
     const { user_id, product_id } = req.query;
