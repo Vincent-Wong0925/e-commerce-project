@@ -4,8 +4,6 @@ const { validateId } = require('../utils');
 
 const cartsRouter = express.Router();
 
-cartsRouter.use('/:id', validateId);
-
 //Get all rows from carts
 cartsRouter.get('/', async (req, res, next) => {
     const queryString = `
@@ -21,7 +19,7 @@ cartsRouter.get('/', async (req, res, next) => {
 });
 
 //Get rows by user_id
-cartsRouter.get('/:id', async (req, res, next) => {
+cartsRouter.get('/:id', validateId, async (req, res, next) => {
     const queryString = `
     SELECT * FROM carts
     WHERE user_id = $1`;
@@ -53,6 +51,60 @@ cartsRouter.post('/', async (req, res, next) => {
         return res.status(400).send(err);
     }
     return res.send('New entry added to carts');
+});
+
+//Checkout a cart and insert its content into orders_products
+cartsRouter.post('/checkout', async (req, res, next) => {
+    const { user_id } = req.query;
+    if(user_id == undefined) { return res.status(400).send("Missing user_id in query"); }
+    if(isNaN(Number(user_id))) { return res.status(400).send("Invalid user_id"); }
+    let queryString;
+    let result;
+
+    try {
+        //validate the cart exist
+        queryString = `
+        SELECT EXISTS (
+            SELECT 1 FROM carts
+            WHERE user_id = $1
+        )`;
+        result = await db.query(queryString, [user_id]);
+        if(result.rows[0].exists == false) { return res.status(404).send("Carts not found"); }
+
+        //create a new order
+        queryString = `
+        INSERT INTO orders (user_id)
+        VALUES ($1)
+        RETURNING id`;
+        result = await db.query(queryString, [user_id]);
+
+        const order_id = result.rows[0].id;
+
+        //insert products into orders_products
+        queryString = `
+        SELECT orders.id as order_id, 
+            carts.user_id, 
+            carts.product_id, 
+            carts.number 
+        FROM carts, orders
+        WHERE carts.user_id = orders.user_id
+            AND orders.id = $1`;
+        result = await db.query(queryString, [order_id]);
+        
+        queryString = `
+        INSERT INTO orders_products (order_id, product_id, number)
+        VALUES ($1, $2, $3)`;
+        result.rows.forEach(async ({order_id, product_id, number}) => {
+            try {
+                let response = await db.query(queryString, [order_id, product_id, number]);
+            } catch(err) {
+                return res.status(400).send(err);
+            }
+        });
+        return res.send(`Order id=${order_id} created successfully`);
+    } catch(err) {
+        return res.status(400).send(err);
+    }
 });
 
 //Update the number of a cart item by user_id and product_id(both mandatory)
