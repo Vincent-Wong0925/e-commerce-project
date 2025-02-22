@@ -8,6 +8,7 @@ const registrationRouter = require('./routes/registration');
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const db = require("./db/index");
+const session = require("express-session");
 
 
 const app = express();
@@ -20,6 +21,15 @@ app.use('/users', usersRouter);
 app.use('/carts', cartsRouter);
 app.use('/orders', ordersRouter);
 app.use('/register', registrationRouter);
+
+const store = new session.MemoryStore();
+app.use(session({
+  secret: "Gk8dYnkJh",
+  cookie: { maxAge: 1000 * 60 * 60 * 24, secure: true, sameSite: "none" },
+  resave: false,
+  saveUninitialized: false,
+  store
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
