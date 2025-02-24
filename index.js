@@ -7,7 +7,6 @@ const ordersRouter = require('./routes/orders');
 const registrationRouter = require('./routes/registration');
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const db = require("./db/index");
 const session = require("express-session");
 
 
@@ -55,6 +54,51 @@ passport.use(new LocalStrategy({
     }
   }
 ));
+
+passport.serializeUser((user, done) => {
+  return done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  const queryString = `
+  SELECT * FROM users
+  WHERE id = $1`;
+  let result;
+
+  try {
+    result = await db.query(queryString, [id]);
+    if (result.rowCount == 0) {
+      return done(null, false);
+    }
+    const user = result.rows[0];
+    return done(null, user);
+  } catch(err) {
+    return done(err);
+  }
+});
+
+app.get('/login', (req, res, next) => {
+  return res.send("This is the login page");
+});
+
+app.post('/login', passport.authenticate("local", {failureRedirect: '/login'}),
+  (req, res, next) => {
+    return res.send("Successfully login");
+  });
+
+app.post('/logout', (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    return res.redirect('/login');
+  });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send(err);
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
