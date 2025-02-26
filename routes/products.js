@@ -19,14 +19,14 @@ productsRouter.get('/', async (req, res, next) => {
     if (result.rowCount == 0) {
         return res.status(404).send('Products not found');
     }
-    return res.send(result.rows);
+    return res.send({products: result.rows});
 });
 
 //get a product by id
 productsRouter.get('/:id', async (req, res, next) => {
     const result = await db.query('SELECT * FROM products WHERE id = $1', [req.params.id]);
     if (result.rowCount > 0) {
-        return res.send(result.rows);
+        return res.send({products: result.rows});
     } else {
         return res.status(404).send('Product id not found');
     }
@@ -37,14 +37,15 @@ productsRouter.post('/', async (req, res, next) => {
     const {name, type, price, note} = req.body;
     const queryString = 
     `INSERT INTO products (name, type, price, note) 
-    VALUES ($1, $2, $3, $4)`;
+    VALUES ($1, $2, $3, $4)
+    RETURNING id, name, type, price, note`;
     let result;
     try {
         result = await db.query(queryString, [name, type, price, note]);
     } catch(err) {
         return res.status(400).send(err);
     }
-    res.send(result);
+    res.status(201).send({product: result.rows[0]});
 });
 
 //Update a product by id
@@ -53,7 +54,8 @@ productsRouter.put('/:id', async (req, res, next) => {
     const queryString = 
     `UPDATE products
     SET ${queryValues}
-    WHERE id = ${req.params.id}`;
+    WHERE id = ${req.params.id}
+    RETURNING id, name, type, price, note`;
     
     let result;
     try {
@@ -65,7 +67,7 @@ productsRouter.put('/:id', async (req, res, next) => {
     if (result.rowCount == 0) {
         res.status(404).send('Product not found');
     }
-    res.send(result);
+    res.send({product: result.rows[0]});
 
 });
 
@@ -78,7 +80,7 @@ productsRouter.delete('/:id', async (req, res, next) => {
     if (result.rowCount == 0) {
         return res.status(404).send('Product id not found');
     } else {
-        return res.send("Deleted 1 row");
+        return res.status(204).send();
     }
 });
 
