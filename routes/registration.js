@@ -11,7 +11,8 @@ registrationRouter.post('/', async (req, res, next) => {
 
     const queryString = `
     INSERT INTO users (username, password, email)
-    VALUES ($1, $2, $3)`;
+    VALUES ($1, $2, $3)
+    RETURNING *`;
     let result;
 
     try {
@@ -20,7 +21,7 @@ registrationRouter.post('/', async (req, res, next) => {
         if (err.code = "23505") { return res.status(400).send("User with this email already exists"); }
         return res.status(400).send(err);
     }
-    return res.send(result);
+    return res.status(201).send({user: result.rows[0]});
 });
 
 module.exports = registrationRouter;
