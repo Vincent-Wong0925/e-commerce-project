@@ -38,7 +38,7 @@ productsRouter.post('/', async (req, res, next) => {
     const queryString = 
     `INSERT INTO products (name, type, price, note) 
     VALUES ($1, $2, $3, $4)
-    RETURNING id, name, type, price, note`;
+    RETURNING *`;
     let result;
     try {
         result = await db.query(queryString, [name, type, price, note]);
@@ -55,7 +55,7 @@ productsRouter.put('/:id', async (req, res, next) => {
     `UPDATE products
     SET ${queryValues}
     WHERE id = ${req.params.id}
-    RETURNING id, name, type, price, note`;
+    RETURNING *`;
     
     let result;
     try {
@@ -80,7 +80,7 @@ productsRouter.delete('/:id', async (req, res, next) => {
     if (result.rowCount == 0) {
         return res.status(404).send('Product id not found');
     } else {
-        return res.status(204).send();
+        return res.status(204).send({});
     }
 });
 
