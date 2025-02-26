@@ -15,7 +15,7 @@ cartsRouter.get('/', async (req, res, next) => {
     } catch(err) {
         return res.status(400).send(err);
     }
-    return res.send(result.rows);
+    return res.send({carts: result.rows});
 });
 
 //Get rows by user_id
@@ -34,7 +34,7 @@ cartsRouter.get('/:id', validateId, async (req, res, next) => {
     if (result.rowCount == 0) {
         return res.status(404).send('User not found');
     }
-    return res.send(result.rows);
+    return res.send({carts: result.rows});
 });
 
 //Add a row to carts
@@ -42,7 +42,8 @@ cartsRouter.post('/', async (req, res, next) => {
     const { user_id, product_id, number } = req.body;
     const queryString = `
     INSERT INTO carts (user_id, product_id, number)
-    VALUES ($1, $2, $3)`;
+    VALUES ($1, $2, $3)
+    RETURNING *`;
 
     let result;
     try {
@@ -50,7 +51,7 @@ cartsRouter.post('/', async (req, res, next) => {
     } catch(err) {
         return res.status(400).send(err);
     }
-    return res.send('New entry added to carts');
+    return res.status(201).send({cart: result.rows[0]});
 });
 
 //Checkout a cart and insert its content into orders_products
@@ -101,7 +102,12 @@ cartsRouter.post('/checkout', async (req, res, next) => {
                 return res.status(400).send(err);
             }
         });
-        return res.send(`Order id=${order_id} created successfully`);
+
+        queryString = `
+        SELECT * FROM orders_products
+        WHERE order_id = $1`;
+        result = await db.query(queryString, [order_id]);
+        return res.send({orders: result.rows});
     } catch(err) {
         return res.status(400).send(err);
     }
@@ -120,7 +126,8 @@ cartsRouter.put('/', async (req, res, next) => {
     UPDATE carts
     SET number = $1
     WHERE user_id = $2
-    AND product_id = $3`;
+    AND product_id = $3
+    RETURNING *`;
 
     let result;
     try {
@@ -129,7 +136,7 @@ cartsRouter.put('/', async (req, res, next) => {
         return res.status(400).send(err);
     }
     if (result.rowCount == 0) { return res.status(404).send('Cart item not found'); }
-    return (res.send(result));
+    return (res.send({cart: result.rows[0]}));
 });
 
 //Delete cart item(s) by user_id(mandatory) and product_id(optional)
@@ -161,7 +168,7 @@ cartsRouter.delete('/', async (req, res, next) => {
     if (result.rowCount == 0) {
         return res.status(404).send('Cart item not found');
     }
-    return res.send(result);
+    return res.status(204).send({});
 });
 
 module.exports = cartsRouter;
