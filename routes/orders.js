@@ -17,7 +17,8 @@ ordersRouter.get('/', async (req, res, next) => {
         products.name, 
         products.type, 
         products.price, 
-        products.note
+        products.note,
+        orders_products.number
     FROM orders, orders_products, products
     WHERE orders.id = orders_products.order_id
         AND orders_products.product_id = products.id`;
@@ -36,7 +37,7 @@ ordersRouter.get('/', async (req, res, next) => {
     }
 
     if(result.rowCount == 0) { return res.status(404).send('Order not found'); }
-    return res.send(result.rows);
+    return res.send({orders: result.rows});
 });
 
 //Get an order by id
@@ -48,7 +49,8 @@ ordersRouter.get('/:id', async (req, res, next) => {
         products.name, 
         products.type, 
         products.price, 
-        products.note
+        products.note,
+        orders_products.number
     FROM orders, orders_products, products
     WHERE orders.id = orders_products.order_id
         AND orders_products.product_id = products.id
@@ -62,7 +64,7 @@ ordersRouter.get('/:id', async (req, res, next) => {
     }
 
     if(result.rowCount == 0) { return res.status(404).send('Order not found'); }
-    return res.send(result.rows);
+    return res.send({order: result.rows});
 });
 
 //Add a new order
@@ -73,7 +75,8 @@ ordersRouter.post('/', async (req, res, next) => {
 
     const queryString = `
     INSERT INTO orders (user_id)
-    VALUES ($1)`
+    VALUES ($1)
+    RETURNING *`
 
     let result;
     try {
@@ -81,7 +84,7 @@ ordersRouter.post('/', async (req, res, next) => {
     } catch(err) {
         return res.status(400).send(err);
     }
-    return res.send(result);
+    return res.status(201).send({order: result.rows[0]});
 });
 
 module.exports = ordersRouter;
