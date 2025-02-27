@@ -1,0 +1,851 @@
+openapi: 3.0.1
+info:
+  title: e-commerce-project
+  version: 1.0.0
+  description: A basic API for a e-commerce site
+paths:
+  /products:
+    summary: Query for data in the products database
+    description: This path is used to perform CRUD operations on the products database.
+    get:
+      summary: Get all products
+      description: Retrieve all products information from the products database
+      operationId: get_products
+      parameters:
+        - name: type
+          in: query
+          description: 'Type of the target products'
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'A list of all products information'
+          content:
+            application/json:
+              examples:
+                products:
+                  value: |-
+                    {
+                        "products": [
+                            {
+                                "id": 3,
+                                "name": "Omega Seamaster 300藍面黑面鋼帶",
+                                "type": "watches",
+                                "price": "HK$38,800.00",
+                                "note": null
+                            },
+                            {
+                                "id": 1,
+                                "name": "意大利Epsom軍小牛皮帶",
+                                "type": "straps",
+                                "price": "HK$180.00",
+                                "note": "black"
+                            },
+                            {
+                                "id": 2,
+                                "name": "意大利Epsom軍小牛皮帶",
+                                "type": "straps",
+                                "price": "HK$180.00",
+                                "note": "blue"
+                            }
+                        ]
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - products
+    post:
+      summary: Add a new product to the database
+      description: Insert a new product data into the products database
+      operationId: post_products
+      requestBody:
+        description: 'A new product object'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: 'The newly created product object'
+          content:
+            application/json:
+              examples:
+                product:
+                  value: |-
+                    {
+                        "product": {
+                            "id": 12,
+                            "name": "意大利Epsom軍小牛皮帶",
+                            "type": "straps",
+                            "price": "HK$180.00",
+                            "note": "pink"
+                        }
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - products
+  /products/{id}:
+    summary: Query the products database for an item of specific id
+    description: >-
+      This path is used to perform CRUD operations on a specific item in the
+      products database.
+    get:
+      summary: Get a product information
+      description: Retrieve a product information with a specific id from the database.
+      operationId: get_products_id
+      parameters:
+        - $ref: '#/components/parameters/productParam'
+      responses:
+        '200':
+          description: 'A product object'
+          content:
+            application/json:
+              examples:
+                products:
+                  value: |-
+                    {
+                        "product": {
+                            "id": 1,
+                            "name": "意大利Epsom軍小牛皮帶",
+                            "type": "straps",
+                            "price": "HK$180.00",
+                            "note": "black"
+                        }
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - products
+    put:
+      summary: Modify a product information
+      description: Update the information of an existing product in the products database.
+      operationId: put_products
+      parameters:
+        - $ref: '#/components/parameters/productParam'
+      requestBody:
+        description: 'A product object'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: 'The updated product object'
+          content:
+            application/json:
+              examples:
+                product:
+                  value: |-
+                    {
+                        "product": {
+                            "id": 12,
+                            "name": "意大利Epsom軍小牛皮帶",
+                            "type": "straps",
+                            "price": "HK$180.00",
+                            "note": "grey"
+                        }
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - products
+    delete:
+      summary: Delete a product from the database
+      description: >-
+        Delete a product information with a specific id from the products
+        database.
+      operationId: delete_products
+      parameters:
+        - $ref: '#/components/parameters/productParam'
+      responses:
+        '204':
+          description: 'An empty object'
+          content:
+            application/json:
+              examples:
+                delete product:
+                  value: '{}'
+        default:
+          description: Default error sample response
+      tags:
+        - products
+  /users:
+    summary: Query the users database
+    description: This path is used to perform CRUD operations on the users database.
+    get:
+      summary: Get all users
+      description: Retrieve all user data from the users database
+      operationId: get_users
+      responses:
+        '200':
+          description: 'A list of all users'
+          content:
+            application/json:
+              examples:
+                users:
+                  value: |-
+                    {
+                        "users": [
+                            {
+                                "id": 1,
+                                "username": "James Bond",
+                                "password": "crazypassword",
+                                "email": "bond@yehoo.com"
+                            },
+                            {
+                                "id": 3,
+                                "username": "John Ethen",
+                                "password": "johnE",
+                                "email": "john@email.com"
+                            },
+                            {
+                                "id": 7,
+                                "username": "Marry",
+                                "password": "76803",
+                                "email": "marryj@gmail.com"
+                            },
+                            {
+                                "id": 8,
+                                "username": "John Ethen",
+                                "password": "jethen",
+                                "email": "johnL@gmail.com"
+                            },
+                            {
+                                "id": 9,
+                                "username": "Richard001",
+                                "password": "rich0924",
+                                "email": "richard@gmail.com"
+                            }
+                        ]
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - users
+    post:
+      summary: Add a new user
+      description: Insert a new user to the users database
+      operationId: post_users
+      requestBody:
+        description: 'A new user object'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - users
+  /users/{id}:
+    summary: Query the users database for a specific item
+    description: >-
+      This path is used to perform CRUD operations on an data with specific id
+      in the users database.
+    parameters:
+        - $ref: '#/components/parameters/userParam'
+    get:
+      summary: Get a specific user data
+      description: Get a user data with a specific id from the users database
+      operationId: get_users_id
+      responses:
+        '200':
+          description: 'An user object'
+          content:
+            application/json:
+              examples:
+                user:
+                  value: |-
+                    {
+                        "user": {
+                            "id": 1,
+                            "username": "James Bond",
+                            "password": "crazypassword",
+                            "email": "bond@yehoo.com"
+                        }
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - users
+    put:
+      summary: Modify a user data
+      description: Update an existing user data with a specific id in the users database
+      operationId: put_users
+      requestBody:
+        description: 'A new user object'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: 'The updated user object'
+          content:
+            application/json:
+              examples:
+                user:
+                  value: |-
+                    {
+                        "user": {
+                            "id": 1,
+                            "username": "James Bond",
+                            "password": "wonkypassword",
+                            "email": "bond@yehoo.com"
+                        }
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - users
+    delete:
+      summary: Delete a user data
+      description: Delete a user data with a specific id from the users database
+      operationId: delete_users
+      responses:
+        '204':
+          description: 'An empty object'
+          content:
+            application/json:
+              examples:
+                delete user:
+                  value: '{}'
+        default:
+          description: Default error sample response
+      tags:
+        - users
+  /carts:
+    summary: Query the carts database
+    description: This path is used to perform CRUD operations on carts database.
+    get:
+      summary: Get all data from carts
+      description: Retrieve all data from the carts database
+      operationId: get_carts
+      responses:
+        '200':
+          description: 'A list of all cart objects'
+          content:
+            application/json:
+              examples:
+                carts:
+                  value: |-
+                    {
+                        "carts": [
+                            {
+                                "user_id": 1,
+                                "product_id": 2,
+                                "number": 5
+                            },
+                            {
+                                "user_id": 1,
+                                "product_id": 1,
+                                "number": 3
+                            },
+                            {
+                                "user_id": 1,
+                                "product_id": 3,
+                                "number": 2
+                            },
+                            {
+                                "user_id": 3,
+                                "product_id": 2,
+                                "number": 2
+                            },
+                            {
+                                "user_id": 3,
+                                "product_id": 3,
+                                "number": 1
+                            }
+                        ]
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - carts
+    post:
+      summary: Add a new cart data to the database
+      description: Insert a new cart data to the carts database
+      operationId: post_carts
+      requestBody:
+        description: 'A cart object'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cart'
+      responses:
+        '201':
+          description: 'The newly created cart object'
+          content:
+            application/json:
+              examples:
+                cart:
+                  value: |-
+                    {
+                        "cart": {
+                            "user_id": 7,
+                            "product_id": 1,
+                            "number": 2
+                        }
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - carts
+    put:
+      summary: Modify a cart item
+      description: Update the number of a cart item by user_id and product_id
+      operationId: put_carts
+      parameters:
+        - $ref: '#/components/parameters/cartUserId'
+        - name: product_id
+          in: query
+          description: 'The product_id of the target cart item'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'An object containing a number'
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                number:
+                  type: integer
+      responses:
+        '200':
+          description: 'A cart object'
+          content:
+            application/json:
+              examples:
+                cart:
+                  value: |-
+                    {
+                        "cart": {
+                            "user_id": 7,
+                            "product_id": 1,
+                            "number": 3
+                        }
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - carts
+    delete:
+      summary: Delete cart item(s)
+      description: >-
+        Delete one or more cart items from the carts database by
+        user_id(mandatory) and product_id(optional).
+      operationId: delete_carts
+      parameters:
+        - $ref: '#/components/parameters/cartUserId'
+        - name: product_id
+          in: query
+          description: 'The product_id of the target cart item'
+          required: false
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'An empty object'
+          content:
+            application/json:
+              examples:
+                delete cart:
+                  value: '{}'
+        default:
+          description: Default error sample response
+      tags:
+        - carts
+  /carts/{id}:
+    summary: Query the carts database for a specific data
+    description: >-
+      This path is used to perform CRUD operations on a data with specific id in
+      the carts database.
+    get:
+      summary: Get a cart data with specific user_id
+      description: Retrieve a cart data with a specific user_id from the carts database.
+      operationId: get_carts_id
+      parameters:
+        - name: id
+          in: path
+          description: 'The user_id of the target cart.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'A list of cart objects with the given user_id'
+          content:
+            application/json:
+              examples:
+                carts:
+                  value: |-
+                    {
+                        "carts": [
+                            {
+                                "user_id": 1,
+                                "product_id": 2,
+                                "number": 5
+                            },
+                            {
+                                "user_id": 1,
+                                "product_id": 1,
+                                "number": 3
+                            },
+                            {
+                                "user_id": 1,
+                                "product_id": 3,
+                                "number": 2
+                            }
+                        ]
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - carts
+  /carts/checkout:
+    summary: Add the items in a user's cart into the orders database
+    description: >-
+      This path is used to add the cart items of a user to the orders database
+      and confirm the purchase.
+    post:
+      summary: Checkout the item of a cart
+      description: >-
+        Create an order and insert the items of a cart into orders_products
+        database.
+      operationId: post_checkout
+      parameters:
+        - $ref: '#/components/parameters/cartUserId'
+      responses:
+        '200':
+          description: 'A list of newly created orders_products objects'
+          content:
+            application/json:
+              examples:
+                orders:
+                  value: |-
+                    {
+                        "orders": [
+                            {
+                                "order_id": 14,
+                                "product_id": 1,
+                                "number": 3
+                            },
+                            {
+                                "order_id": 14,
+                                "product_id": 2,
+                                "number": 4
+                            }
+                        ]
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - carts
+  /orders:
+    summary: Query the orders and orders_products database
+    description: >-
+      This path is used to perform CRUD operations on the orders and
+      orders_products database.
+    get:
+      summary: Get all orders or orders of a user
+      description: >-
+        Retrieve all orders from the database when no user_id is provided and
+        orders of a user when user_id is provided.
+      operationId: get_orders
+      parameters:
+        - name: user_id
+          in: query
+          description: 'The user_id of the target order.'
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'A list of orders'
+          content:
+            application/json:
+              examples:
+                orders:
+                  value: |-
+                    {
+                        "orders": [
+                            {
+                                "user_id": 1,
+                                "order_id": 1,
+                                "product_id": 1,
+                                "name": "意大利Epsom軍小牛皮帶",
+                                "type": "straps",
+                                "price": "HK$180.00",
+                                "note": "black",
+                                "number": 2
+                            },
+                            {
+                                "user_id": 1,
+                                "order_id": 1,
+                                "product_id": 2,
+                                "name": "意大利Epsom軍小牛皮帶",
+                                "type": "straps",
+                                "price": "HK$180.00",
+                                "note": "blue",
+                                "number": 1
+                            },
+                            {
+                                "user_id": 3,
+                                "order_id": 2,
+                                "product_id": 1,
+                                "name": "意大利Epsom軍小牛皮帶",
+                                "type": "straps",
+                                "price": "HK$180.00",
+                                "note": "black",
+                                "number": 1
+                            },
+                            {
+                                "user_id": 3,
+                                "order_id": 2,
+                                "product_id": 2,
+                                "name": "意大利Epsom軍小牛皮帶",
+                                "type": "straps",
+                                "price": "HK$180.00",
+                                "note": "blue",
+                                "number": 3
+                            },
+                            {
+                                "user_id": 3,
+                                "order_id": 2,
+                                "product_id": 3,
+                                "name": "Omega Seamaster 300藍面黑面鋼帶",
+                                "type": "watches",
+                                "price": "HK$38,800.00",
+                                "note": null,
+                                "number": 1
+                            },
+                            {
+                                "user_id": 1,
+                                "order_id": 4,
+                                "product_id": 1,
+                                "name": "意大利Epsom軍小牛皮帶",
+                                "type": "straps",
+                                "price": "HK$180.00",
+                                "note": "black",
+                                "number": 1
+                            }
+                    ]
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - orders
+    post:
+      summary: Add a new order to the database
+      description: Insert a new order into the orders database
+      operationId: post_orders
+      requestBody:
+        description: 'An object containing user_id'
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+      responses:
+        '201':
+          description: 'The newly created order object'
+          content:
+            application/json:
+              examples:
+                order:
+                  value: |-
+                    {
+                        "order": {
+                            "id": 15,
+                            "user_id": 7
+                        }
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - orders
+  /orders/{id}:
+    summary: Query the orders and orders_products database for a specific order id
+    description: >-
+      This path is used to perform CRUD operations on data with specific order
+      id in the orders and orders_products database.
+    get:
+      summary: Get an order by id
+      description: Retrieve an order with a specific id from the orders database.
+      operationId: get_orders_id
+      parameters:
+        - name: id
+          in: path
+          description: 'The id of the target order'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'A list of orders_products objects with a given order_id'
+          content:
+            application/json:
+              examples:
+                order:
+                  value: |-
+                    {
+                        "order": [
+                            {
+                                "user_id": 1,
+                                "order_id": 1,
+                                "product_id": 1,
+                                "name": "意大利Epsom軍小牛皮帶",
+                                "type": "straps",
+                                "price": "HK$180.00",
+                                "note": "black",
+                                "number": 2
+                            },
+                            {
+                                "user_id": 1,
+                                "order_id": 1,
+                                "product_id": 2,
+                                "name": "意大利Epsom軍小牛皮帶",
+                                "type": "straps",
+                                "price": "HK$180.00",
+                                "note": "blue",
+                                "number": 1
+                            }
+                        ]
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - orders
+  /register:
+    summary: Create and add a new user to users database
+    description: This path is used to create and add a new user to the users database.
+    post:
+      summary: Create and add a new user into the database
+      description: Create and insert a new user data into the users database.
+      operationId: post_register
+      requestBody:
+        description: 'An user object'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: 'The newly created user object'
+          content:
+            application/json:
+              examples:
+                user:
+                  value: |-
+                    {
+                        "user": {
+                            "id": 10,
+                            "username": "Vicky2046",
+                            "password": "20460708",
+                            "email": "vicky2046@yahoo.com"
+                        }
+                    }
+        default:
+          description: Default error sample response
+      tags:
+        - register
+  /login:
+    summary: Login to a session
+    description: This path is used to login to a session via email and password.
+    get:
+      summary: The default login path for redirect
+      description: This is the default path for redirecting from a failed login or a logout
+      operationId: get_login
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - login
+    post:
+      summary: Login a user to a session
+      description: Allow a user to login to a session using email and password.
+      operationId: post_login
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - login
+  /logout:
+    summary: Logout of a session
+    description: This path is used to logout of a session after logging in.
+    post:
+      summary: Logout a user from a session
+      description: >-
+        Allow a user to logout of the current session and be redirected to login
+        path.
+      operationId: post_logout
+      responses:
+        default:
+          description: Default error sample response
+      tags:
+        - logout
+components:
+  parameters:
+    productParam:
+      name: id
+      in: path
+      description: 'The id of the product.'
+      required: true
+      schema:
+        type: string
+    userParam:
+      name: id
+      in: path
+      description: 'The id of the user.'
+      required: true
+      schema:
+        type: string
+    cartUserId:
+      name: user_id
+      in: query
+      description: 'The user_id of the target cart.'
+      required: true
+      schema:
+        type: string
+  schemas:
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+        "type":
+          type: string
+        price:
+          type: number
+        note:
+          type: string
+      xml:
+        name: Product
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+      xml:
+        name: User
+    Cart:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        product_id:
+          type: integer
+        number:
+          type: integer
+      xml:
+        name: Cart
