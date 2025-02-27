@@ -1,6 +1,6 @@
 const express = require('express');
 const db = require('../db/index');
-const { objToParams, objToQueryConditions, validateId } = require('../utils');
+const { objToQueryConditions, validateId } = require('../utils');
 
 const productsRouter = express.Router();
 
@@ -26,7 +26,7 @@ productsRouter.get('/', async (req, res, next) => {
 productsRouter.get('/:id', async (req, res, next) => {
     const result = await db.query('SELECT * FROM products WHERE id = $1', [req.params.id]);
     if (result.rowCount > 0) {
-        return res.send({products: result.rows});
+        return res.send({product: result.rows[0]});
     } else {
         return res.status(404).send('Product id not found');
     }
