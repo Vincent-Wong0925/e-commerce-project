@@ -8,12 +8,14 @@ const registrationRouter = require('./routes/registration');
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
+const cors = require('cors');
 
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+app.use(cors());
 
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);

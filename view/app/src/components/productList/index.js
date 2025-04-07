@@ -4,9 +4,9 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/esm/Container";
 
-const ProductList = ({products}) => {
+const ProductList = ({products=[]}) => {
     return (
-        <Container className="ProductList">
+        <Container className="ProductList m-3">
             <Row xs={1} md={4} className="g-4">
                 {products.map((product) => 
                     <Col>

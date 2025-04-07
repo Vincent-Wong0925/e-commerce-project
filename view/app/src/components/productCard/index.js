@@ -1,6 +1,7 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
+import watchImg from "../../img/watch.jpg";
 
 const ProductCard = ({
     productImg,
@@ -9,11 +10,11 @@ const ProductCard = ({
 }) => {
     return (
         <Card>
-            <Card.Img src={productImg} />
+            <Card.Img src={productImg || watchImg} />
             <Card.Body>
                 <Card.Title>{productName}</Card.Title>
-                <Card.Text>${productPrice}</Card.Text>
-                <Button>Add to cart</Button>
+                <Card.Text>{productPrice}</Card.Text>
+                <Button>Detail</Button>
             </Card.Body>
         </Card>
     )

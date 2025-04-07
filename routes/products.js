@@ -19,7 +19,7 @@ productsRouter.get('/', async (req, res, next) => {
     if (result.rowCount == 0) {
         return res.status(404).send('Products not found');
     }
-    return res.send({products: result.rows});
+    return res.json({products: result.rows});
 });
 
 //get a product by id
@@ -29,6 +29,17 @@ productsRouter.get('/:id', async (req, res, next) => {
         return res.send({product: result.rows[0]});
     } else {
         return res.status(404).send('Product id not found');
+    }
+});
+
+//get a product by type
+productsRouter.get('/', async (req, res, next) => {
+    const type = req.query.type;
+    const result = await db.query('SELECT * FROM products WHERE type = $1', [type]);
+    if (result.rowCount > 0) {
+        return res.send({products: result.rows[0]});
+    } else {
+        return res.status(404).send('Product type not found');
     }
 });
 
