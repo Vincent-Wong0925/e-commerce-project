@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getProducts, getProductsByType } from "../../api";
+import { getProducts } from "../../api";
 import ProductList from "../../components/productList";
 import Container from "react-bootstrap/esm/Container";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -13,17 +13,11 @@ const ProductsPage = () => {
 
     useEffect(() => {
         async function getProductsData() {
-            let data;
-            if (productType == '') {
-                data = await getProducts();
-            } else {
-                data = await getProductsByType(productType);
-            }
+            const data = await getProducts(productType, '');
             setPorducts(data.products);
         }
 
         getProductsData();
-        console.log(products);
     }, [productType]);
 
     return (
@@ -40,6 +34,7 @@ const ProductsPage = () => {
                             <Dropdown.Item as={Button} onClick={() => {setProductType('')}}>All products</Dropdown.Item>
                             <Dropdown.Item as={Button} onClick={() => {setProductType('watches')}}>Watches</Dropdown.Item>
                             <Dropdown.Item as={Button} onClick={() => {setProductType('straps')}}>Straps</Dropdown.Item>
+                            <Dropdown.Item as={Button} onClick={() => {setProductType('accessories')}}>Accessories</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
                     <ProductList products={products} />

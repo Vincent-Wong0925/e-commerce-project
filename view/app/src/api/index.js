@@ -1,17 +1,9 @@
 const baseURL = 'http://localhost:3000'
 
-export const getProducts = async () => {
-    const response = await fetch(baseURL + '/products', {
-        method: 'GET'
-    });
+export const getProducts = async (type, number) => {
+    const queryParams = new URLSearchParams({type, number});
     
-    const json = await response.json();
-    
-    return json;
-}
-
-export const getProductsByType = async (type) => {
-    const response = await fetch(`${baseURL}/products?type=${type}`, {
+    const response = await fetch(`${baseURL}/products?${queryParams.toString()}`, {
         method: 'GET'
     });
     

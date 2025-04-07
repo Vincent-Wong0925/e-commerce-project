@@ -1,19 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Banner from "../../components/banner";
 import ProductList from "../../components/productList";
-import watchImg from "../../img/watch.jpg";
 import Container from "react-bootstrap/esm/Container";
+import { getProducts } from "../../api";
 
 const HomePage = () => {
+    const [products, setPorducts] = useState([]);
+
+    useEffect(() => {
+        async function getProductsData() {
+            const data = await getProducts('', 4);
+            
+            setPorducts(data.products);
+        }
+
+        getProductsData();
+    }, []);
+
     return(
         <Container className="HomePage">
             <Banner />
-            <ProductList products={[
-                {image: watchImg, name: "jkhkjnj", price: 3600.00},
-                {image: watchImg, name: "jkhkjnj", price: 3600.00},
-                {image: watchImg, name: "jkhkjnj", price: 3600.00},
-                {image: watchImg, name: "jkhkjnj", price: 3600.00}
-            ]} />
+            <ProductList products={products} />
         </Container>
     );
 }

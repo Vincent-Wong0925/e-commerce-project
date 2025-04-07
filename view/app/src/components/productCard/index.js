@@ -1,7 +1,6 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
-import watchImg from "../../img/watch.jpg";
 
 const ProductCard = ({
     productImg,
@@ -9,8 +8,9 @@ const ProductCard = ({
     productPrice
 }) => {
     return (
-        <Card>
-            <Card.Img src={productImg || watchImg} />
+        <Card style={{height: "24rem"}}>
+            <Card.Img src={productImg || 'https://d2i8wfwwd0u9rg.cloudfront.net/watch.jpg'} 
+                className="h-50 w-100 object-fit-cover" />
             <Card.Body>
                 <Card.Title>{productName}</Card.Title>
                 <Card.Text>{productPrice}</Card.Text>

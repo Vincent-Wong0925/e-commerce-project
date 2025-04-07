@@ -8,17 +8,21 @@ productsRouter.use('/:id', validateId);
 
 //get all products info or a type of product if query string exist in the path
 productsRouter.get('/', async (req, res, next) => {
-    const productType = req.query.type;
+    const {type, number} = req.query;
+    
     let result;
-    if (productType == undefined) {
-        result = await db.query('SELECT * FROM products');
-    } else {
-        result = await db.query('SELECT * FROM products WHERE type = $1', [productType]);
+    try {
+        if (type == '' && number == '') {
+            result = await db.query('SELECT * FROM products');
+        } else if (type !== '') {
+            result = await db.query('SELECT * FROM products WHERE type = $1', [type]);
+        } else if (number !== '') {
+            result = await db.query('SELECT * FROM products LIMIT $1', [number]);
+        }
+    } catch(err) {
+        return res.status(404).json({error: err});
     }
 
-    if (result.rowCount == 0) {
-        return res.status(404).send('Products not found');
-    }
     return res.json({products: result.rows});
 });
 
@@ -29,17 +33,6 @@ productsRouter.get('/:id', async (req, res, next) => {
         return res.send({product: result.rows[0]});
     } else {
         return res.status(404).send('Product id not found');
-    }
-});
-
-//get a product by type
-productsRouter.get('/', async (req, res, next) => {
-    const type = req.query.type;
-    const result = await db.query('SELECT * FROM products WHERE type = $1', [type]);
-    if (result.rowCount > 0) {
-        return res.send({products: result.rows[0]});
-    } else {
-        return res.status(404).send('Product type not found');
     }
 });
 
