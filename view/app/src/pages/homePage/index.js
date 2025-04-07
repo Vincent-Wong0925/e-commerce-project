@@ -2,7 +2,6 @@ import React from "react";
 import Banner from "../../components/banner";
 import ProductList from "../../components/productList";
 import watchImg from "../../img/watch.jpg";
-import Footer from "../../components/footer";
 
 const HomePage = () => {
     return(
@@ -14,7 +13,6 @@ const HomePage = () => {
                 {image: watchImg, name: "jkhkjnj", price: 3600.00},
                 {image: watchImg, name: "jkhkjnj", price: 3600.00}
             ]} />
-            <Footer />
         </div>
     );
 }
