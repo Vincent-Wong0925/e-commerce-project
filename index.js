@@ -16,7 +16,10 @@ const port = 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
-app.use(cors());
+app.use(cors({
+  credentials: true,
+  origin: "http://localhost:3001"
+}));
 
 app.use('/products', productsRouter);
 app.use('/users', usersRouter);
