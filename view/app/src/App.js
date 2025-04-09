@@ -4,12 +4,14 @@ import Root from './components/root';
 import HomePage from './pages/homePage';
 import ProductsPage from './pages/productsPage';
 import LoginPage from './pages/loginPage';
+import ProfilePage from './pages/profilePage';
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route path="/" element={ <Root/> }>
     <Route index element={ <HomePage/> }/>
     <Route path="/products" element={ <ProductsPage/> }/>
     <Route path="/login" element={<LoginPage />}/>
+    <Route path="/profile" element={<ProfilePage />}/>
   </Route>
 ));
 

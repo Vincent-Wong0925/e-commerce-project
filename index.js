@@ -5,6 +5,7 @@ const usersRouter = require('./routes/users');
 const cartsRouter = require('./routes/carts');
 const ordersRouter = require('./routes/orders');
 const registrationRouter = require('./routes/registration');
+const profileRouter = require('./routes/profile');
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
@@ -16,21 +17,11 @@ const port = 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
-app.use(cors({
-  credentials: true,
-  origin: "http://localhost:3001"
-}));
-
-app.use('/products', productsRouter);
-app.use('/users', usersRouter);
-app.use('/carts', cartsRouter);
-app.use('/orders', ordersRouter);
-app.use('/register', registrationRouter);
 
 const store = new session.MemoryStore();
 app.use(session({
   secret: "Gk8dYnkJh",
-  cookie: { maxAge: 1000 * 60 * 60 * 24, secure: true, sameSite: "none" },
+  cookie: { maxAge: 1000 * 60 * 60 * 24},
   resave: false,
   saveUninitialized: false,
   store
@@ -38,6 +29,11 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(cors({
+  origin: "http://localhost:3001",
+  credentials: true,
+}));
 
 passport.use(new LocalStrategy({
     usernameField: 'email',
@@ -66,6 +62,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (id, done) => {
+  console.log("success");
   const queryString = `
   SELECT * FROM users
   WHERE id = $1`;
@@ -77,11 +74,18 @@ passport.deserializeUser(async (id, done) => {
       return done(null, false);
     }
     const user = result.rows[0];
-    return done(null, user);
+    done(null, user);
   } catch(err) {
     return done(err);
   }
 });
+
+app.use('/products', productsRouter);
+app.use('/users', usersRouter);
+app.use('/carts', cartsRouter);
+app.use('/orders', ordersRouter);
+app.use('/register', registrationRouter);
+app.use('/profile', profileRouter);
 
 app.get('/login', (req, res, next) => {
   return res.send("This is the login page");
@@ -89,7 +93,7 @@ app.get('/login', (req, res, next) => {
 
 app.post('/login', passport.authenticate("local", {failureRedirect: '/login'}),
   (req, res, next) => {
-    return res.send("Successfully login");
+    return res.status(200).json({id: req.user.id, username: req.user.username, email: req.user.email});
   });
 
 app.post('/logout', (req, res, next) => {
@@ -97,7 +101,7 @@ app.post('/logout', (req, res, next) => {
     if (err) {
       return next(err);
     }
-    return res.redirect('/login');
+    return res.status(200).json({message: "Logged out successfully"});
   });
 });
 
