@@ -164,32 +164,31 @@ cartsRouter.put('/', async (req, res, next) => {
 cartsRouter.delete('/', async (req, res, next) => {
     const { user_id, product_id } = req.query;
     if (user_id == undefined) {
-        return res.status(400).send('Missing user_id');
+        return res.status(400).json({error: 'Missing user_id'});
     }
     if (isNaN(Number(user_id))) {
-        return res.status(400).send('Invalid id');
-    }
-
-    const queryString = `
-    DELETE FROM carts
-    WHERE user_id = $1
-    ${product_id !== undefined ? `AND product_id = $2` : ``}`;
-    let queryValue = [user_id];
-    if (product_id !== undefined) {
-        queryValue.push(product_id);
+        return res.status(400).json({error: 'Invalid id'});
     }
 
     let result;
     try {
+        let queryString = `
+        DELETE FROM carts
+        WHERE user_id = $1
+        ${product_id !== undefined ? `AND product_id = $2` : ``}`;
+        let queryValue = [user_id];
+        if (product_id !== undefined) {
+            queryValue.push(product_id);
+        }
         result = await db.query(queryString, queryValue);
-    } catch(err) {
-        return res.status(400).send(err);
-    }
+        if (result.rowCount == 0) {
+            return res.status(404).json({error: 'Cart item not found'});
+        }
 
-    if (result.rowCount == 0) {
-        return res.status(404).send('Cart item not found');
+        return res.status(204).json();
+    } catch(err) {
+        return res.status(400).json({error: err});
     }
-    return res.status(204).send({});
 });
 
 module.exports = cartsRouter;

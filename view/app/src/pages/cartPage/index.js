@@ -6,15 +6,28 @@ import CartItem from "../../components/cartItem";
 import Button from "react-bootstrap/esm/Button";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import { getCart } from "../../api";
+import { deleteCartItem, getCart, getProfile } from "../../api";
 
 const CartPage = () => {
-    const [cart, setCart] = useState([]);
+    const [cart, setCart] = useState();
     const navigate = useNavigate();
 
     async function getCartData() {
+        const profile = await getProfile();
+        if (profile.error) {
+            return navigate('/login');
+        }
         const response = await getCart();
         setCart(response.cart);
+    }
+
+    const handleDelete = async (user_id, product_id) => {
+        try {
+            const response = await deleteCartItem(user_id, product_id);
+            await getCartData();
+        } catch(err) {
+            alert(err);
+        }
     }
 
     useEffect(() => {
@@ -24,10 +37,11 @@ const CartPage = () => {
     return (
         <Container className="m-vh-100">
             <h1 className="my-3">Shopping Cart</h1>
-            {!cart ? 
-                navigate('/login') : 
-                cart.map((item) => <CartItem item={item} />)
+
+            {cart && 
+                cart.map((item) => <CartItem item={item} onDelete={handleDelete} />)
             }
+
             {cart && 
                 <Card style={{"max-width": "50rem", "min-width": "25rem"}}
                     className="align-self-center mx-auto shadow justify-content-center">

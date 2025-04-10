@@ -49,3 +49,20 @@ export const getProfile = async () => {
         alert(err);
     }
 }
+
+export const deleteCartItem = async (user_id, product_id) => {
+    try {
+        const queryParams = new URLSearchParams({user_id, product_id});
+    
+        const response = await fetch(`${baseURL}/carts?${queryParams.toString()}`, {
+            method: 'DELETE',
+            credentials: "include"
+        });
+        
+        const json = await response.json();
+        
+        return json;
+    } catch(err) {
+        console.log(err);
+    }
+}
