@@ -6,23 +6,44 @@ const cartsRouter = express.Router();
 
 //Get all rows from carts
 cartsRouter.get('/', async (req, res, next) => {
+    if (!req.user) {
+        return res.status(400).json({error: "User is not logged in"});
+    }
+    const userId = req.user.id;
     const queryString = `
-    SELECT * FROM carts`;
+    SELECT carts.user_id, 
+        carts.product_id, 
+        carts.number, 
+        products.name, 
+        products.price, 
+        products.note, 
+        products.image
+    FROM carts, products
+    WHERE carts.user_id = $1
+        AND carts.product_id = products.id;`;
 
     let result;
     try {
-        result = await db.query(queryString);
+        result = await db.query(queryString, [userId]);
     } catch(err) {
-        return res.status(400).send(err);
+        return res.status(400).json({error: err});
     }
-    return res.send({carts: result.rows});
+    return res.status(200).json({cart: result.rows});
 });
 
 //Get rows by user_id
 cartsRouter.get('/:id', validateId, async (req, res, next) => {
     const queryString = `
-    SELECT * FROM carts
-    WHERE user_id = $1`;
+    SELECT carts.user_id, 
+        carts.product_id, 
+        carts.number, 
+        products.name, 
+        products.price, 
+        products.note, 
+        products.image
+    FROM carts, products
+    WHERE carts.user_id = $1
+        AND carts.product_id = products.id;`;
 
     let result;
     try {
@@ -34,7 +55,7 @@ cartsRouter.get('/:id', validateId, async (req, res, next) => {
     if (result.rowCount == 0) {
         return res.status(404).send('User not found');
     }
-    return res.send({carts: result.rows});
+    return res.send({cart: result.rows});
 });
 
 //Add a row to carts
