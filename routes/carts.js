@@ -15,7 +15,7 @@ cartsRouter.get('/', async (req, res, next) => {
         carts.product_id, 
         carts.number, 
         products.name, 
-        products.price, 
+        products.price::decimal, 
         products.note, 
         products.image
     FROM carts, products
