@@ -6,25 +6,19 @@ import CartItem from "../../components/cartItem";
 import Button from "react-bootstrap/esm/Button";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
+import { getCart } from "../../api";
 
 const CartPage = () => {
     const [cart, setCart] = useState([]);
     const navigate = useNavigate();
 
+    async function getCartData() {
+        const response = await getCart();
+        setCart(response.cart);
+    }
+
     useEffect(() => {
-        async function getCart() {
-            try {
-                const response = await fetch('http://localhost:3000/carts', {
-                    method: "GET",
-                    credentials: "include"
-                });
-                const json = await response.json();
-                setCart(json.cart);
-            } catch(err) {
-                alert("Something went wrong");
-            }
-        }
-        getCart();
+        getCartData();
     },[]);
 
     return (

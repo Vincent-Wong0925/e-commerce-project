@@ -87,11 +87,11 @@ app.use('/orders', ordersRouter);
 app.use('/register', registrationRouter);
 app.use('/profile', profileRouter);
 
-app.get('/login', (req, res, next) => {
-  return res.send("This is the login page");
+app.get('/login-failed', (req, res, next) => {
+  return res.status(400).json({error: "Wrong email or password"});
 });
 
-app.post('/login', passport.authenticate("local", {failureRedirect: '/login'}),
+app.post('/login', passport.authenticate("local", {failureRedirect: '/login-failed'}),
   (req, res, next) => {
     return res.status(200).json({id: req.user.id, username: req.user.username, email: req.user.email});
   });

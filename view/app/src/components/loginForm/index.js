@@ -3,22 +3,20 @@ import Button from "react-bootstrap/esm/Button";
 import Container from "react-bootstrap/esm/Container";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../../api";
 
 const LoginForm = ({ toggle }) => {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
-    const baseURL = 'http://localhost:3000'
     const navigate = useNavigate();
 
     async function handleLogin(e) {
         e.preventDefault();
         try {
-            const response = await fetch(`${baseURL}/login`, {
-                headers:{ 'Content-type': 'application/json', },
-                method: "POST",
-                body: JSON.stringify({ email, password }),
-                credentials: "include"
-            });
+            const response = await loginUser(email, password);
+            if (response.error) {
+                throw new Error(response.error);
+            }
             navigate('/');
         } catch(err) {
             alert(err);
