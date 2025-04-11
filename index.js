@@ -10,6 +10,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 
 
 const app = express();
@@ -47,7 +48,8 @@ passport.use(new LocalStrategy({
         return done(null, false, { message: "Username or password incorrect" });
       }
       const user = result.rows[0];
-      if (user.password !== password) {
+      const isMatch = bcrypt.compare(password ,user.password);
+      if (!isMatch) {
         return done(null, false, { message: "Username or password incorrect" });
       }
       return done(null, user);

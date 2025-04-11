@@ -1,5 +1,6 @@
 const express = require("express");
 const db = require("../db/index");
+const bcrypt = require("bcrypt");
 
 const registrationRouter = express.Router();
 
@@ -9,6 +10,8 @@ registrationRouter.post('/', async (req, res, next) => {
         return res.status(400).json({error: "Missing details in request body"}); 
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const queryString = `
     INSERT INTO users (username, password, email)
     VALUES ($1, $2, $3)
@@ -16,12 +19,12 @@ registrationRouter.post('/', async (req, res, next) => {
     let result;
 
     try {
-        result = await db.query(queryString, [username, password, email]);
+        result = await db.query(queryString, [username, hashedPassword, email]);
     } catch(err) {
-        if (err.code = "23505") { return res.status(400).json({error: "User with this email already exists"}); }
-        return res.status(400).send(err);
+        if (err.code == "23505") { return res.status(400).json({error: err}); }
+        return res.status(400).json({error: err});
     }
-    return res.status(201).send({user: result.rows[0]});
+    return res.status(201).json({user: result.rows[0]});
 });
 
 module.exports = registrationRouter;

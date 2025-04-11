@@ -88,3 +88,22 @@ export const addToCart = async (product_id, quantity) => {
         console.log(err);
     }
 }
+
+export const registerUser = async (name, email, password) => {
+    try {
+        const response = await fetch(`${baseURL}/register`, {
+            headers:{
+                'Content-type': 'application/json',
+            },
+            method: "POST",
+            body: JSON.stringify({ username: name, email, password }),
+            credentials: "include"
+        })
+
+        const json = await response.json();
+        
+        return json;
+    } catch(err) {
+        console.log(err);
+    }
+}

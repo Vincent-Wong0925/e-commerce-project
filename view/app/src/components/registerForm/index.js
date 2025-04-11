@@ -2,26 +2,23 @@ import React, { useState } from "react";
 import Button from "react-bootstrap/esm/Button";
 import Container from "react-bootstrap/esm/Container";
 import Form from "react-bootstrap/Form";
+import { registerUser } from "../../api";
 
 const RegisterForm = ({ toggle }) => {
-    const baseURL = 'http://localhost:3000'
     const [name, setName] = useState();
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
 
     async function handleRegister() {
         try {
-            const response = await fetch(`${baseURL}/register`, {
-                headers:{
-                    'Content-type': 'application/json',
-                },
-                method: "POST",
-                body: JSON.stringify({ username: name, email, password })
-            })
+            const response = await registerUser(name, email, password);
+            if (response.error) {
+                console.log(response.error);
+            }
             alert("Account successfully created");
             toggle();
         } catch(err) {
-            alert(err);
+            console.log(err);
         }
     }
 
