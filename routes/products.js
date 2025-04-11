@@ -12,7 +12,7 @@ productsRouter.get('/', async (req, res, next) => {
     
     let result;
     try {
-        if (type == '' && number == '') {
+        if (!type && !number) {
             result = await db.query('SELECT * FROM products');
         } else if (type !== '') {
             result = await db.query('SELECT * FROM products WHERE type = $1', [type]);

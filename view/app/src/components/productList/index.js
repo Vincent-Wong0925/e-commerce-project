@@ -10,9 +10,7 @@ const ProductList = ({products=[]}) => {
             <Row xs={1} md={4} className="g-4">
                 {products.map((product) => 
                     <Col>
-                        <ProductCard productImg={product.image} 
-                            productName={product.name} 
-                            productPrice={product.price} />
+                        <ProductCard key={product.id} product={product} />
                     </Col>)}
             </Row>
         </Container>

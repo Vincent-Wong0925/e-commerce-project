@@ -21,7 +21,7 @@ const ProductsPage = () => {
     }, [productType]);
 
     return (
-        <Container className="ProductsPage my-3">
+        <Container className="ProductsPage my-3 min-vh-100">
             <Row>
                 <Col>
                     <h1>Products</h1>

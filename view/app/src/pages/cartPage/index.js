@@ -35,7 +35,7 @@ const CartPage = () => {
     },[]);
 
     return (
-        <Container className="m-vh-100">
+        <Container className="min-vh-100">
             <h1 className="my-3">Shopping Cart</h1>
 
             {cart && 

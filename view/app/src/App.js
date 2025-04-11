@@ -6,11 +6,13 @@ import ProductsPage from './pages/productsPage';
 import LoginPage from './pages/loginPage';
 import ProfilePage from './pages/profilePage';
 import CartPage from './pages/cartPage';
+import ProductDetailPage from './pages/productDetailPage';
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route path="/" element={ <Root/> }>
     <Route index element={ <HomePage/> }/>
     <Route path="/products" element={ <ProductsPage/> }/>
+    <Route path="/products/detail" element={<ProductDetailPage/>}/>
     <Route path="/login" element={<LoginPage />}/>
     <Route path="/profile" element={<ProfilePage />}/>
     <Route path="/cart" element={<CartPage />}/>
