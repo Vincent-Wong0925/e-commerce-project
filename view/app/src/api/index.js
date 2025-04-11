@@ -66,3 +66,25 @@ export const deleteCartItem = async (user_id, product_id) => {
         console.log(err);
     }
 }
+
+export const addToCart = async (product_id, quantity) => {
+    try {
+        const response = await fetch(`${baseURL}/carts`, {
+            headers: {
+                "Content-type": "application/json"
+            },
+            method: "post",
+            credentials: "include",
+            body: JSON.stringify({
+                product_id,
+                number: quantity
+            })
+        });
+
+        const json = await response.json();
+
+        return json;
+    } catch(err) {
+        console.log(err);
+    }
+}

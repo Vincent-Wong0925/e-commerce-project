@@ -60,17 +60,30 @@ cartsRouter.get('/:id', validateId, async (req, res, next) => {
 
 //Add a row to carts
 cartsRouter.post('/', async (req, res, next) => {
-    const { user_id, product_id, number } = req.body;
-    const queryString = `
-    INSERT INTO carts (user_id, product_id, number)
-    VALUES ($1, $2, $3)
-    RETURNING *`;
+    const user_id = req.user.id;
+    const { product_id, number } = req.body;
 
     let result;
     try {
-        result = await db.query(queryString, [user_id, product_id, number]);
+        //Check if item already exist
+        const cartItem = await db.query(`SELECT * FROM carts WHERE user_id = $1 AND product_id = $2`, [user_id, product_id]);
+        //If exist
+        if (cartItem.rowCount !== 0) {
+            result = await db.query(`
+                UPDATE carts
+                SET number = number + $1
+                WHERE user_id = $2
+                AND product_id = $3
+                RETURNING *`, [number, user_id, product_id]);
+        } else {
+            //If not exist
+            result = await db.query(`
+                INSERT INTO carts (user_id, product_id, number)
+                VALUES ($1, $2, $3)
+                RETURNING *`, [user_id, product_id, number]);
+        }
     } catch(err) {
-        return res.status(400).send(err);
+        return res.status(400).json({error: err});
     }
     return res.status(201).send({cart: result.rows[0]});
 });
