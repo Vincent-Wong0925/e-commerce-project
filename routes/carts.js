@@ -90,9 +90,9 @@ cartsRouter.post('/', async (req, res, next) => {
 
 //Checkout a cart and insert its content into orders_products
 cartsRouter.post('/checkout', async (req, res, next) => {
-    const { user_id } = req.query;
-    if(user_id == undefined) { return res.status(400).send("Missing user_id in query"); }
-    if(isNaN(Number(user_id))) { return res.status(400).send("Invalid user_id"); }
+    const user_id = req.user.id;
+    if(user_id == undefined) { return res.status(400).json({error: "missing user"}); }
+    
     let queryString;
     let result;
 
@@ -104,7 +104,7 @@ cartsRouter.post('/checkout', async (req, res, next) => {
             WHERE user_id = $1
         )`;
         result = await db.query(queryString, [user_id]);
-        if(result.rows[0].exists == false) { return res.status(404).send("Carts not found"); }
+        if(result.rows[0].exists == false) { return res.status(404).json({error: "Cart not found"}); }
 
         //create a new order
         queryString = `
@@ -133,7 +133,7 @@ cartsRouter.post('/checkout', async (req, res, next) => {
             try {
                 let response = await db.query(queryString, [order_id, product_id, number]);
             } catch(err) {
-                return res.status(400).send(err);
+                return res.status(400).json({error: err});
             }
         });
 
@@ -141,9 +141,9 @@ cartsRouter.post('/checkout', async (req, res, next) => {
         SELECT * FROM orders_products
         WHERE order_id = $1`;
         result = await db.query(queryString, [order_id]);
-        return res.send({orders: result.rows});
+        return res.status(200).json({orders: result.rows});
     } catch(err) {
-        return res.status(400).send(err);
+        return res.status(400).json({error: err});
     }
 });
 
@@ -175,20 +175,19 @@ cartsRouter.put('/', async (req, res, next) => {
 
 //Delete cart item(s) by user_id(mandatory) and product_id(optional)
 cartsRouter.delete('/', async (req, res, next) => {
-    const { user_id, product_id } = req.query;
-    if (user_id == undefined) {
-        return res.status(400).json({error: 'Missing user_id'});
-    }
-    if (isNaN(Number(user_id))) {
-        return res.status(400).json({error: 'Invalid id'});
-    }
-
-    let result;
     try {
+        const user_id = req.user.id;
+        const { product_id } = req.query;
+        
+        if (user_id == undefined) {
+            return res.status(400).json({error: 'Missing user_id'});
+        }
+
+        let result;
         let queryString = `
         DELETE FROM carts
         WHERE user_id = $1
-        ${product_id !== undefined ? `AND product_id = $2` : ``}`;
+        ${product_id !== undefined && `AND product_id = $2`}`;
         let queryValue = [user_id];
         if (product_id !== undefined) {
             queryValue.push(product_id);

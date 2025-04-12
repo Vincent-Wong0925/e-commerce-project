@@ -6,7 +6,7 @@ import CartItem from "../../components/cartItem";
 import Button from "react-bootstrap/esm/Button";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import { deleteCartItem, getCart, getProfile } from "../../api";
+import { checkoutCart, deleteCartItem, getCart, getProfile } from "../../api";
 
 const CartPage = () => {
     const [cart, setCart] = useState();
@@ -21,9 +21,19 @@ const CartPage = () => {
         setCart(response.cart);
     }
 
-    const handleDelete = async (user_id, product_id) => {
+    const handleDelete = async (product_id) => {
         try {
-            const response = await deleteCartItem(user_id, product_id);
+            const response = await deleteCartItem(product_id);
+            await getCartData();
+        } catch(err) {
+            alert(err);
+        }
+    }
+
+    const handleCheckout = async () => {
+        try {
+            await checkoutCart();
+            await deleteCartItem();
             await getCartData();
         } catch(err) {
             alert(err);
@@ -55,7 +65,7 @@ const CartPage = () => {
                                 </Card.Title>
                             </Col>
                             <Col className="d-flex justify-content-end">
-                                <Button>Checkout</Button>
+                                <Button onClick={handleCheckout}>Checkout</Button>
                             </Col>
                         </Row>
                     </Card.Body>

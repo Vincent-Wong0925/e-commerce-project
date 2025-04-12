@@ -50,11 +50,10 @@ export const getProfile = async () => {
     }
 }
 
-export const deleteCartItem = async (user_id, product_id) => {
+export const deleteCartItem = async (product_id) => {
     try {
-        const queryParams = new URLSearchParams({user_id, product_id});
-    
-        const response = await fetch(`${baseURL}/carts?${queryParams.toString()}`, {
+        const query = product_id ? `?product_id=${product_id}` : ``;
+        const response = await fetch(`${baseURL}/carts${query}`, {
             method: 'DELETE',
             credentials: "include"
         });
@@ -105,5 +104,20 @@ export const registerUser = async (name, email, password) => {
         return json;
     } catch(err) {
         console.log(err);
+    }
+}
+
+export const checkoutCart = async () => {
+    try {
+        const response = await fetch(`${baseURL}/carts/checkout`, {
+            method: "POST",
+            credentials: "include"
+        });
+
+        const json = await response.json();
+
+        return json;
+    } catch(err) {
+        console.log({error: err});
     }
 }

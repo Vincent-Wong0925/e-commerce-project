@@ -5,10 +5,10 @@ import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 
 const CartItem = ({ item, onDelete }) => {
-    const {user_id, product_id, name, price, number, note, image} = item;
+    const {product_id, name, price, number, note, image} = item;
 
     const handleDelete = () => {
-        onDelete(user_id, product_id);
+        onDelete(product_id);
     }
 
     return (
