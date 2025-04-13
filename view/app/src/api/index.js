@@ -118,6 +118,21 @@ export const checkoutCart = async () => {
 
         return json;
     } catch(err) {
-        console.log({error: err});
+        console.log(err);
+    }
+}
+
+export const getOrdersByUser = async () => {
+    try {
+        const response = await fetch(`${baseURL}/orders`, {
+            method: "GET",
+            credentials: "include"
+        });
+
+        const json = await response.json();
+
+        return json;
+    } catch(err) {
+        console.log(err);
     }
 }

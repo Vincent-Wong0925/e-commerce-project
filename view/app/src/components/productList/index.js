@@ -9,7 +9,7 @@ const ProductList = ({products=[]}) => {
         <Container className="ProductList m-3">
             <Row xs={1} md={4} className="g-4">
                 {products.map((product) => 
-                    <Col>
+                    <Col key={product.id}>
                         <ProductCard key={product.id} product={product} />
                     </Col>)}
             </Row>

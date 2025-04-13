@@ -6,41 +6,28 @@ const ordersRouter = express.Router();
 
 ordersRouter.use('/:id', validateId);
 
-//Get all orders or orders by user_id(optional)
+//Get all orders or orders by user_id
 ordersRouter.get('/', async (req, res, next) => {
-    const { user_id } = req.query;
-
-    let queryString = `
-    SELECT orders.user_id, 
-        orders_products.order_id, 
-        orders_products.product_id, 
-        products.name, 
-        products.type, 
-        products.price, 
-        products.note,
-        orders_products.number
-    FROM orders, orders_products, products
-    WHERE orders.id = orders_products.order_id
-        AND orders_products.product_id = products.id`;
-    let queryValue = [];
-    if (user_id !== undefined) {
-        if(isNaN(Number(user_id))) { return res.status(400).send('Invalid user_id'); }
-        queryString = queryString + ` AND orders.user_id = $1`;
-        queryValue.push(user_id);
-    }
-
-    let result;
     try {
+        const user_id = req.user.id;
+
+        let queryString = `
+        SELECT *
+        FROM orders
+        WHERE user_id = $1`;
+        let queryValue = [user_id];
+
+        let result;
         result = await db.query(queryString, queryValue);
+
+        if(result.rowCount == 0) { return res.status(404).json({error: 'Order not found'}); }
+        return res.send({orders: result.rows});
     } catch(err) {
         return res.status(400).send(err);
     }
-
-    if(result.rowCount == 0) { return res.status(404).send('Order not found'); }
-    return res.send({orders: result.rows});
 });
 
-//Get an order by id
+//Get the content of an order by id
 ordersRouter.get('/:id', async (req, res, next) => {
     const queryString = `
     SELECT orders.user_id, 
