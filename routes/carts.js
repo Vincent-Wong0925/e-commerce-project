@@ -176,6 +176,7 @@ cartsRouter.put('/', async (req, res, next) => {
 //Delete cart item(s) by user_id(mandatory) and product_id(optional)
 cartsRouter.delete('/', async (req, res, next) => {
     try {
+        console.log("Attempting to delete");
         const user_id = req.user.id;
         const { product_id } = req.query;
         
@@ -187,8 +188,9 @@ cartsRouter.delete('/', async (req, res, next) => {
         let queryString = `
         DELETE FROM carts
         WHERE user_id = $1
-        ${product_id !== undefined && `AND product_id = $2`}`;
+        ${product_id !== undefined ? `AND product_id = $2` : ``}`;
         let queryValue = [user_id];
+        
         if (product_id !== undefined) {
             queryValue.push(product_id);
         }
