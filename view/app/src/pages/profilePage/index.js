@@ -21,14 +21,15 @@ const ProfilePage = () => {
     },[]);
 
     return (
-        <Container className="vh-100 py-3">
+        <Container className="min-vh-100 py-3">
             {user && 
                 <div>
                     <h1>Profile</h1>
                     <h2>{user.username}</h2>
                     <h3>Email: {user.email}</h3>
-                    <OrderList />
                     <LogoutButton />
+                    <h1 className="mt-3">Your Orders</h1>
+                    <OrderList />
                 </div>}
         </Container>
     )

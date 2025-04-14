@@ -136,3 +136,18 @@ export const getOrdersByUser = async () => {
         console.log(err);
     }
 }
+
+export const getOrderById = async (orderId) => {
+    try {
+        const response = await fetch(`${baseURL}/orders/${orderId}`, {
+            method: "GET",
+            credentials: "include"
+        });
+
+        const json = await response.json();
+
+        return json;
+    } catch(err) {
+        console.log(err);
+    }
+}

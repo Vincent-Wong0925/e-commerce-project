@@ -14,7 +14,8 @@ ordersRouter.get('/', async (req, res, next) => {
         let queryString = `
         SELECT *
         FROM orders
-        WHERE user_id = $1`;
+        WHERE user_id = $1
+        ORDER BY order_time DESC`;
         let queryValue = [user_id];
 
         let result;
@@ -35,8 +36,9 @@ ordersRouter.get('/:id', async (req, res, next) => {
         orders_products.product_id, 
         products.name, 
         products.type, 
-        products.price, 
+        products.price::decimal, 
         products.note,
+        products.image,
         orders_products.number
     FROM orders, orders_products, products
     WHERE orders.id = orders_products.order_id
@@ -47,11 +49,11 @@ ordersRouter.get('/:id', async (req, res, next) => {
     try {
         result = await db.query(queryString, [req.params.id]);
     } catch(err) {
-        return res.status(400).send(err);
+        return res.status(400).json({error: err});
     }
 
     if(result.rowCount == 0) { return res.status(404).send('Order not found'); }
-    return res.send({order: result.rows});
+    return res.json({order: result.rows});
 });
 
 //Add a new order
