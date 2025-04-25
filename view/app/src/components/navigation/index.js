@@ -8,7 +8,7 @@ const Navigation = () => {
     return (
         <Navbar expand="lg" className="bg-info-subtle">
             <Container>
-                <Navbar.Brand as={Link} to="/" >Brand Name</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/" >123WatchShop</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="justify-content-end w-100">

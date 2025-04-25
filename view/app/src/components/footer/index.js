@@ -10,8 +10,8 @@ const Footer = () => {
             <Container className="bg-dark text-white py-4 mt-4" fluid>
                 <Row>
                     <Col>
-                        <h1>Brand Name</h1>
-                        <h2>Slogan</h2>
+                        <h1>123WatchShop</h1>
+                        <h2>Get your dream watch right now.</h2>
                     </Col>
                     <Col>
                         <h1>Useful Links</h1>
