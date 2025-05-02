@@ -21,7 +21,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-app.use(express.static(path.join(__dirname, "/view/build")));
+app.use(express.static(path.join(__dirname, "./view/build")));
 
 const store = new session.MemoryStore();
 app.use(session({
@@ -94,7 +94,7 @@ app.use('/register', registrationRouter);
 app.use('/profile', profileRouter);
 
 app.get('/*', (req, res, next) => {
-  res.sendFile(path.join(__dirname, "/view/build/index.html"));
+  res.sendFile(path.join(__dirname, "./view/build/index.html"));
 });
 
 app.get('/login-failed', (req, res, next) => {
