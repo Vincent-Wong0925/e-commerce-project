@@ -13,6 +13,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -20,9 +21,11 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
+app.use(express.static(path.join(__dirname, "/view/build")));
+
 const store = new session.MemoryStore();
 app.use(session({
-  secret: "Gk8dYnkJh",
+  secret: process.env.SECRET,
   cookie: { maxAge: 1000 * 60 * 60 * 24},
   resave: false,
   saveUninitialized: false,
@@ -89,6 +92,10 @@ app.use('/carts', cartsRouter);
 app.use('/orders', ordersRouter);
 app.use('/register', registrationRouter);
 app.use('/profile', profileRouter);
+
+app.get('/*', (req, res, next) => {
+  res.sendFile(path.join(__dirname, "/view/build/index.html"));
+});
 
 app.get('/login-failed', (req, res, next) => {
   return res.status(400).json({error: "Wrong email or password"});
