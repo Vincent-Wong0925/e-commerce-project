@@ -1,4 +1,4 @@
-const baseURL = 'http://localhost:3000'
+const baseURL = 'https://e-commerce-project-j5tp.onrender.com'
 
 export const getProducts = async (type, number) => {
     const queryParams = new URLSearchParams({type, number});
