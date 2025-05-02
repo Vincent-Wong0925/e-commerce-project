@@ -151,3 +151,14 @@ export const getOrderById = async (orderId) => {
         console.log(err);
     }
 }
+
+export const logout = async () => {
+    try {
+        const response = await fetch(`${baseURL}/logout`, {
+            method: "POST",
+            credentials: "include"
+        });
+    } catch(err) {
+        alert("Something went wrong");
+    }
+}

@@ -1,20 +1,14 @@
 import React from "react";
 import Button from "react-bootstrap/esm/Button";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../api";
 
 const LogoutButton = () => {
     const navigate = useNavigate();
 
-    async function handleLogout() {
-        try {
-            const response = await fetch('http://localhost:3000/logout', {
-                method: "POST",
-                credentials: "include"
-            });
-            navigate('/login');
-        } catch(err) {
-            alert("Something went wrong");
-        }
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
     }
 
     return (
